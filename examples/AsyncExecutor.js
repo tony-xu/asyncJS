@@ -12,11 +12,11 @@ function* generator(id) {
 
 function genExecutor(genFn) {
   return function () {
-    var g = genFn.apply(this, arguments);
+    var gen = genFn.apply(this, arguments);
     return new Promise((resolve, reject) => {
       function step(method, data) {
         try {
-          var re = g[method](data); // {value: T, done:boolean}
+          var re = gen[method](data); // {value: any, done:boolean}
         } catch (err) {
           reject(err);
           return;
@@ -29,7 +29,7 @@ function genExecutor(genFn) {
               step("next", val);
             },
             (err) => {
-              step("throw", val);
+              step("throw", err);
             }
           );
         }
@@ -43,75 +43,7 @@ res.then(
   (val) => {
     console.log(val);
   },
-  (err) => {}
+  (err) => {
+    console.error(err);
+  }
 );
-
-// function asyncFuncRunner(genfn) {
-//   return function () {
-//     // arguments is an Array-like object accessible inside functions
-//     const gen = genfn.apply(this, arguments);
-//     return new Promise((resolve, reject) => {
-//       function step(method, data) {
-//         try {
-//           var result = gen[method](data);
-//         } catch (err) {
-//           reject(err);
-//           return;
-//         }
-
-//         if (result.done) {
-//           resolve(result.value);
-//         } else {
-//           return Promise.resolve(result.value).then(
-//             (val) => {
-//               step("next", val);
-//             },
-//             (err) => {
-//               step("throw", err);
-//             }
-//           );
-//         }
-//       }
-//       step("next");
-//     });
-//   };
-// }
-
-// function asyncFuncRunner(genfn) {
-//   return function () {
-//     // arguments is an Array-like object accessible inside functions
-//     const gen = genfn.apply(this, arguments);
-//     return new Promise((resolve, reject) => {
-//       function step(method, arg) {
-//         try {
-//           var info = gen[method](arg);
-//           var value = info.value;
-//         } catch (error) {
-//           reject(error);
-//           return;
-//         }
-//         if (info.done) {
-//           resolve(value);
-//         } else {
-//           return Promise.resolve(value).then(
-//             (val) => {
-//               step("next", val);
-//             },
-//             (err) => {
-//               step("throw", err);
-//             }
-//           );
-//         }
-//       }
-//       step("next");
-//     });
-//   };
-// }
-
-// const test = genExecutor(generator)(1);
-// test.then(
-//   (val) => console.log(val),
-//   (err) => {
-//     console.error(err);
-//   }
-// );
