@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@babel/plugin-transform-async-to-generator": "^7.20.7",
+    "babel-core": "^7.0.0-bridge.0"
+  },
+  "plugins": [
+    [
+      "@babel/plugin-transform-async-to-generator",
+      {
+        "module": "bluebird",
+        "method": "coroutine"
+      }
+    ]
+  ]
+}
